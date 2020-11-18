@@ -46,11 +46,20 @@
       </div>
     </div>
   </div>
+  <!-- <a-alert
+      v-if="formState.alertStatus"
+      :message="formState.messageText"
+      :type="formState.typeStatus"
+      closable
+      :after-close="handleClose"
+      banner
+  />-->
 </template>
 
 <script>
 // 导入的其他文件 例如：import moduleName from 'modulePath';
 import { defineComponent, toRef, reactive, ref, unref, onMounted } from "vue";
+import {useRouter} from 'vue-router'
 export default defineComponent({
   setup() {
     const formRef = ref(null);
@@ -61,43 +70,54 @@ export default defineComponent({
     const formRules = reactive({
       account: [{ required: true, message: "请输入账号", trigger: "blur" }],
       password: [{ required: true, message: "请输入密码", trigger: "blur" }]
-      // verify: unref(openLoginVerifyRef) ? [{ required: true, message: '请通过验证码校验' }] : [],
     });
     const formState = reactive({
-      loading: false
-      // form: unref(formRef).createForm(this, { name: "coordinated" })
+      loading: false,
+      alertStatus: false,
+      messageText: "",
+      typeStatus: ""
     });
     const autoLoginRef = ref(false);
-    const labelCol = reactive({
-      span: 4
-    });
-    const wrapperCol = reactive({
-      span: 4
-    });
+    const router = useRouter()
+    const handleClose = () => {
+      formState.alertStatus = false;
+    };
     async function handleLogin() {
       const form = unref(formRef);
-      console.log(form);
+      console.log(form, "validate");
       if (!form) return;
-      formState.loading = true;
-      setTimeout(() => {
-        formState.loading = false;
-      }, 3000);
+       
       try {
         const data = await form.validate();
-        console.log(data, "data");
+        formState.loading = true;
+        setTimeout(() => {
+          formState.loading = false;
+          router.push({
+            path: '/index',
+            query: {id: 1}
+          })
+        }, 3000);
+
         // const userInfo = await
-      } catch (error) {}
+      } catch (error) {
+        console.log(error, "error");
+        if (error.errorFields.length > 0) {
+          formState.alertStatus = true;
+          formState.messageText = "请输入登陆信息";
+          formState.typeStatus = "error";
+          console.log(formState, "formState");
+        }
+      }
     }
     onMounted(() => {
       console.log(formState, "onMounted");
+      console.log(useRouter, 'useRouter')
     });
     return {
       formRef,
       formData,
       formRules,
       formState,
-      labelCol,
-      wrapperCol,
       autoLogin: autoLoginRef,
       login: handleLogin
     };
