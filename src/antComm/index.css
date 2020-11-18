@@ -1,0 +1,26 @@
+.ant-form .ant-form-item .ant-col {
+    width: 100%;
+}
+
+.ant-form-explain {
+    display: flex;
+}
+
+/*button*/
+.ant-btn-primary {
+    background-color: #5a31cc;
+    border-color: #5a31cc;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+    background-color: #a9a6f5;
+    border-color: #a9a6f5;
+}
+
+.ant-btn-link {
+    color: #5a31cc;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+}
