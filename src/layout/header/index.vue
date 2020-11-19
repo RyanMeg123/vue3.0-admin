@@ -38,8 +38,8 @@ export default defineComponent({
 });
 </script>
 <style lang='stylus' scoped>
-//@import url(); 引入公共css类
+// @import url(); 引入公共css类
 .header-dd {
-  layout-flex(row, space-between, center)
+  layout-flex(row, space-between, center);
 }
 </style>

@@ -78,8 +78,8 @@ export default defineComponent({
     const router = useRouter();
     const state = reactive({
       collapse: false,
-      selectedKeys: ["2"],
-      openKeys: ["/"],
+      selectedKeys: [1],
+      openKeys: ["/index/home"],
       menuList: [
         {
           key: 1,

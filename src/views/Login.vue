@@ -93,7 +93,7 @@ export default defineComponent({
         setTimeout(() => {
           formState.loading = false;
           router.push({
-            path: '/index',
+            path: '/index/home',
             query: {id: 1}
           })
         }, 3000);
