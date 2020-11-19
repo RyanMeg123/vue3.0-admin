@@ -142,7 +142,7 @@ export default defineComponent({
 
   .login-body {
     layout-flex(column, , flex-start);
-    width: 600px;
+    width: 560px;
     padding: 4vh;
     height: 480px;
     box-shadow: 0 2px 8px 0 rgba(7, 17, 27, 0.06);

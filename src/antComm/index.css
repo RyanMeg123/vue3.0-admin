@@ -12,17 +12,33 @@
     border-color: #5a31cc;
 }
 
-.ant-btn-primary:hover{
+.ant-btn-primary:hover {
     background-color: #a9a6f5;
     border-color: #a9a6f5;
 }
+
 .ant-btn-primary:focus {
     background-color: #5a31cc;
     border-color: #5a31cc;
 }
+
 .ant-btn-link {
     color: #5a31cc;
     background-color: transparent;
     border-color: transparent;
     box-shadow: none;
+}
+
+.ant-menu-inline .ant-menu-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.ant-menu-inline .ant-menu-submenu .ant-menu-submenu-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 }

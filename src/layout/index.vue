@@ -1,62 +1,64 @@
 <!--  -->
 <template>
   <div class="layout-wrap">
-    <a-layout>
-      <a-layout-sider
-        collapsible
-        class="vab-sider"
-        width="250"
-        v-model:collapsed="state.collapse"
-        :trigger="null"
-      >
+    <a-layout id="components-layout-demo-custom-trigger">
+      <a-layout-sider v-model:collapsed="collapse" :collapsible="true" width="250">
+        <div class="logo" />
         <a-menu
-          class="vab-menu"
           theme="dark"
+          v-model:selectedKeys="selectedKeys"
+          @click="menuHandleClick"
+          :key="index"
           mode="inline"
-          v-model:selectedKeys="state.selectedKeys"
-          v-model:openKeys="state.openKeys"
+          v-for="(item,index) in menuList"
         >
-          <a-menu-item key="1">
-            <user-outlined />
-            <span>nav 1</span>
+          <a-menu-item v-if="item.key!== 2" :key="item.key">
+            <HomeFilled v-if="item.key === 1" />
+            <FrownFilled v-if="item.key === 3" />
+            <span>{{item.title}}</span>
           </a-menu-item>
-          <a-menu-item key="2">
-            <video-camera-outlined />
-            <span>nav 2</span>
-          </a-menu-item>
-          <a-menu-item key="3">
-            <upload-outlined />
-            <span>nav 3</span>
-          </a-menu-item>
+          <a-sub-menu key="sub1" v-if="item.key === 2" @titleClick="titleClick">
+            <template #title>
+              <span>
+                <AppstoreFilled />
+                <span>{{item.title}}</span>
+              </span>
+            </template>
+            <a-menu-item key="5">Option Form</a-menu-item>
+            <a-menu-item key="6">Option 6</a-menu-item>
+            <a-menu-item key="7">Option 7</a-menu-item>
+            <a-menu-item key="8">Option 8</a-menu-item>
+          </a-sub-menu>
         </a-menu>
       </a-layout-sider>
-      <a-layout class="vab-layout">
-        <a-layout-header class="vab-header">
-          <a-row>
-            <a-col :xs="12" :sm="12" :md="12" :lg="12" :xl="2">
-              <menu-unfold-outlined v-if="state.collapse" class="trigger" @click="toggleCollapse" />
-              <menu-fold-outlined v-else class="trigger" @click="toggleCollapse" />
-            </a-col>
-            <a-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <vab-avatar />
-            </a-col>
-          </a-row>
-        </a-layout-header>
-        <vab-tabs />
-        <vab-content />
+      <a-layout>
+        <Header :collapsed="collapse" @toggle-collapsed="toggleCollapse" />
+
+        <!-- <Breadcrumb /> -->
+        <a-layout-content
+          :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
+        >
+          <router-view></router-view>
+        </a-layout-content>
       </a-layout>
     </a-layout>
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive, ref, toRefs, watch } from "vue";
+import Header from "./header";
+import Breadcrumb from "./breadcrumb";
+import { useRoute, useRouter } from "vue-router";
 import {
   UserOutlined,
   VideoCameraOutlined,
   UploadOutlined,
   MenuUnfoldOutlined,
-  MenuFoldOutlined
+  MenuFoldOutlined,
+  HomeFilled,
+  AppstoreFilled,
+  FrownFilled
 } from "@ant-design/icons-vue";
 export default defineComponent({
   components: {
@@ -64,82 +66,116 @@ export default defineComponent({
     VideoCameraOutlined,
     UploadOutlined,
     MenuUnfoldOutlined,
-    MenuFoldOutlined
+    MenuFoldOutlined,
+    Header,
+    Breadcrumb,
+    HomeFilled,
+    AppstoreFilled,
+    FrownFilled,
   },
   setup() {
+    const route = useRoute();
+    const router = useRouter();
     const state = reactive({
       collapse: false,
       selectedKeys: ["2"],
-      openKeys: ["/"]
+      openKeys: ["/"],
+      menuList: [
+        {
+          key: 1,
+          path: "/home",
+          title: "首页"
+        },
+        {
+          key: 2,
+          path: "/vab",
+          title: "组件"
+        },
+        {
+          key: 3,
+          path: "/error",
+          title: "错误"
+        }
+      ]
     });
     const toggleCollapse = () => {
       state.collapse = !state.collapse;
+      console.log(state.collapse, " state.collapse");
     };
+    const menuHandleClick = e => {
+      console.log(e, "menu");
+      if (e.key === 1) {
+        router.push({
+          path: "/index/home"
+        });
+      }
+      if (e.key === "5") {
+        router.push({
+          path: "/index/vab/form"
+        });
+      }
+      if (e.key === 3) {
+        router.push({
+          path: "/index/403"
+        });
+      }
+    };
+    const titleClick = e => {
+      console.log(e, "sub");
+    };
+
+    // 监听路由
+    watch(
+      () => route,
+      route => {
+        console.log(route, "route");
+        // state.matched = route.matched;
+      },
+      {
+        immediate: true,
+        deep: true
+      }
+    );
+    watch(
+      () => router,
+      router => {
+        console.log(router, "router");
+        // state.matched = route.matched;
+      },
+      {
+        immediate: true,
+        deep: true
+      }
+    );
     return {
-      state,
-      toggleCollapse
+      ...toRefs(state),
+      toggleCollapse,
+      menuHandleClick,
+      titleClick
     };
   }
 });
 </script>
 <style lang='stylus'>
+@import '../antComm/index.css';
+
 .layout-wrap {
   display: flex;
   flex: 1;
   height: 100vh;
 
-  .vab-sider {
-    position: fixed;
-    left: 0;
-    height: 100vh;
-    overflow: auto;
-
-    .vab-menu {
-      height: calc(100vh - $layout-header-height);
-    }
+  #components-layout-demo-custom-trigger .trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
   }
 
-  .vab-layout {
-    padding-left: 250px;
-    transition: all 0.2s;
-  }
-
-  .vab-header {
-    padding: 0;
-    background: #fff;
-
-    .ant-col + .ant-col {
-      display: flex;
-      justify-content: flex-end;
-      padding: 0 @vab-padding;
-    }
-
-    .trigger {
-      height: @vab-header-height;
-      padding: 0 @vab-padding;
-      font-size: 18px;
-      line-height: @vab-header-height;
-      cursor: pointer;
-      transition: color 0.3s;
-
-      &:hover {
-        color: #1890ff;
-      }
-    }
-  }
-
-  .vab-collapse {
-    .vab-logo .anticon + span {
-      display: inline-block;
-      max-width: 0;
-      opacity: 0;
-      transition: all 0.2s;
-    }
-
-    & + .vab-layout {
-      padding-left: 81px;
-      transition: all 0.2s;
-    }
+  #components-layout-demo-custom-trigger .logo {
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 16px;
   }
 }
 </style>
